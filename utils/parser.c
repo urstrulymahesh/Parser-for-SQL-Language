@@ -537,9 +537,19 @@ bool conditions(){
 		return 0;
 
 	if(lb()){
+		bcount++;
 		if(!select_())
 			return 0;
 
+		// if(!rb()){
+		// 	//expectederror(")",tok[ptr-1]);
+		// 	return 0;
+		// }
+
+		// if(!semicolon()){
+		// 	expectederror(";",tok[ptr-1]);
+		// 	return 0;
+		// }
 		return 1;
 	}
 
@@ -548,9 +558,12 @@ bool conditions(){
 		return 0;
 
 	if(rb()){
-		if(!semicolon()){
-			expectederror(";",tok[ptr-1]);
-			return 0;
+		bcount--;
+		if(bcount == 0){
+			if(!semicolon()){
+				expectederror(";",tok[ptr-1]);
+				return 0;
+			}
 		}
 		return 1;
 	}
@@ -566,6 +579,13 @@ bool conditions(){
           return 0;
       }
   }
+
+	if(bcount == 0)
+	 return 1;
+	else{
+		printf("Brackets not balanced\n");
+		return 0;
+	}
 
 	return 1;
 }

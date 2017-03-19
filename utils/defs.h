@@ -41,7 +41,7 @@ typedef struct token
 	char* value ;
 }token ;
 
-
+int bcount = 0;
 token *tok[MAX_SIZE];
 int num_tokens = 0;
 int ptr = 0;

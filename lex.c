@@ -218,12 +218,15 @@ bool select_(){
 
 	//CHECK for LEFT BRACKET (NESTED SELECT)
 	if(lb()){
+		bcount ++;
+		printf("%d\n",bcount);
 		if(!select_())
 			return 0;
 	}
 
 	//CHECK FOR RIGHT BRACKET ( NESTED SELECT )
 	if(rb()){
+		bcount--;
 		if(!semicolon())
 			return 0;
 		return 1;
@@ -234,8 +237,14 @@ bool select_(){
 		return 0;
 
 	//SEMICOLON or CONDITIONS
-	if(semicolon())
-		return 1;
+	if(semicolon()){
+		if(bcount == 0)
+			return 1;
+		else {
+			printf("Brackets not balanced\n");
+			return 0;
+		}
+	}
 
 	//WHERE
 	if(!where()){
