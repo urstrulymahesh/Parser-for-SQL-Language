@@ -1,0 +1,6 @@
+SELECT *
+  FROM BOOK
+ WHERE BOOK.AUTHOR_ID = (
+ 		SELECT ID
+          FROM AUTHOR
+         WHERE LAST_NAME = 'Orwell';   

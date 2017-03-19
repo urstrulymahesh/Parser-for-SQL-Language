@@ -1,0 +1,2 @@
+INSERT INTO Customers (CustomerName, ContactName, Address, City, PostalCode, Country)
+VALUES ('Cardinal','Tom B Erichsen','Skagen' ,'Stavanger',4006,'Norway'); 

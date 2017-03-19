@@ -1,0 +1,2 @@
+DELETE FROM Customers
+WHERE CustomerName= Alfreds,customers.id <= 100; 
