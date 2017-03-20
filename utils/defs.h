@@ -41,8 +41,17 @@ typedef struct token
 	char* value ;
 }token ;
 
+typedef struct node
+{
+	char *value;
+	int level;
+}node;
+
+node tree[MAX_SIZE];
+int num_nodes = 0;
 int bcount = 0;
 token *tok[MAX_SIZE];
 int num_tokens = 0;
 int ptr = 0;
 int flag = 0;
+int level = 1;

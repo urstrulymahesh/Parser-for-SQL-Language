@@ -1,3 +1,8 @@
+void create_node(char *value,int level){
+	tree[num_nodes].value = value;
+	tree[num_nodes].level = level;
+	num_nodes++;
+}
 
 void error(token *msg){
 	printf("Syntax error near %s\n",msg->value);
@@ -7,9 +12,10 @@ void expectederror(char *msg,token *loc){
 	printf("expected %s near %s\n",msg,loc->value);
 }
 
-bool table(){
+bool table(int level){
 	if(num_tokens > ptr){
 		if(tok[ptr]->type == 16 ){
+			create_node(tok[ptr]->value,level);
 			ptr++;
 			return 1;
 		}
@@ -21,9 +27,10 @@ bool table(){
 	}
 }
 
-bool from(){
+bool from(int level){
 	if(num_tokens >ptr){
 		if(tok[ptr]->type == 25){
+			create_node(tok[ptr]->value,level);
 			ptr++;
 			return 1;
 		}
@@ -38,9 +45,10 @@ bool from(){
 	}
 }
 
-bool star(){
+bool star(int level){
 	if(num_tokens >ptr){
 		if(tok[ptr]->type == 8){
+			create_node(tok[ptr]->value,level);
 			ptr++;
 			return 1;
 		}
@@ -54,9 +62,10 @@ bool star(){
 	}
 }
 
-bool where(){
+bool where(int 	level){
 	if(num_tokens >ptr){
 		if(tok[ptr]->type == 26){
+			create_node(tok[ptr]->value,level);
 			ptr++;
 			return 1;
 		}
@@ -70,9 +79,10 @@ bool where(){
 	}
 }
 
-bool id(){
+bool id(int level){
 	if(num_tokens >ptr){
 		if(tok[ptr]->type == 43){
+			create_node(tok[ptr]->value,level);
 			ptr++;
 			return 1;
 		}
@@ -86,9 +96,10 @@ bool id(){
 	}
 }
 
-bool semicolon(){
+bool semicolon(int level){
 	if(num_tokens > ptr){
 		if(tok[ptr]->type == 9){
+			create_node(tok[ptr]->value,level);
 			ptr++;
 			return 1;
 		}
@@ -101,9 +112,10 @@ bool semicolon(){
 	}
 }
 
-bool equal(){
+bool equal(int level){
 	if(num_tokens > ptr){
 		if(tok[ptr]->type == 6){
+			create_node(tok[ptr]->value,level);
 			ptr++;
 			return 1;
 		}
@@ -118,9 +130,10 @@ bool equal(){
 	}
 }
 
-bool dot(){
+bool dot(int level){
   if(num_tokens > ptr){
 		if(tok[ptr]->type == 11){
+			create_node(tok[ptr]->value,level);
 			ptr++;
 			return 1;
 		}
@@ -131,9 +144,10 @@ bool dot(){
 		return 0;
 }
 
-bool aps(){
+bool aps(int level){
   if(num_tokens > ptr){
 		if(tok[ptr]->type == 10){
+			create_node(tok[ptr]->value,level);
 			ptr++;
 			return 1;
 		}
@@ -144,9 +158,10 @@ bool aps(){
 		return 0;
 }
 
-bool comma(){
+bool comma(int level){
   if(num_tokens > ptr){
 		if(tok[ptr]->type == 7){
+			create_node(tok[ptr]->value,level);
 			ptr++;
 			return 1;
 		}
@@ -157,9 +172,10 @@ bool comma(){
 		return 0;
 }
 
-bool lb(){
+bool lb(int level){
 	if(num_tokens > ptr){
 		if(tok[ptr]->type == 0){
+			create_node(tok[ptr]->value,level);
 			ptr++;
 			return 1;
 		}
@@ -174,9 +190,10 @@ bool lb(){
 	}
 }
 
-bool rb(){
+bool rb(int level){
 	if(num_tokens > ptr){
 		if(tok[ptr]->type == 1){
+			create_node(tok[ptr]->value,level);
 			ptr++;
 			return 1;
 		}
@@ -191,9 +208,10 @@ bool rb(){
 	}
 }
 
-bool into(){
+bool into(int level){
 	if(num_tokens > ptr){
 		if(tok[ptr]->type == 33){
+			create_node(tok[ptr]->value,level);
 			ptr++;
 			return 1;
 		}
@@ -208,9 +226,10 @@ bool into(){
 	}
 }
 
-bool values(){
+bool values(int level){
 	if(num_tokens > ptr){
 		if(tok[ptr]->type == 34){
+			create_node(tok[ptr]->value,level);
 			ptr++;
 			return 1;
 		}
@@ -225,9 +244,10 @@ bool values(){
 	}
 }
 
-bool set(){
+bool set(int level){
 	if(num_tokens > ptr){
 		if(tok[ptr]->type == 36){
+			create_node(tok[ptr]->value,level);
 			ptr++;
 			return 1;
 		}
@@ -242,9 +262,10 @@ bool set(){
 	}
 }
 
-bool num(){
+bool num(int level){
   if(num_tokens > ptr){
 		if(tok[ptr]->type == 44){
+			create_node(tok[ptr]->value,level);
 			ptr++;
 			return 1;
 		}
@@ -255,9 +276,10 @@ bool num(){
 		return 0;
 }
 
-bool column(){
+bool column(int level){
 	if(num_tokens > ptr){
 		if(tok[ptr]->type == 41 ){
+			create_node(tok[ptr]->value,level);
 			ptr++;
 			return 1;
 		}
@@ -269,21 +291,23 @@ bool column(){
 	}
 }
 
-bool definition(){
+bool definition(int level){
 	if(num_tokens > ptr){
 		if(tok[ptr]->type == 17 || tok[ptr]->type == 18 ){
+			create_node(tok[ptr]->value,level);
 			ptr++;
 			return 1;
 		}
 		else if( tok[ptr]->type == 19){
+			create_node(tok[ptr]->value,level);
 			ptr++;
-			if(!lb()){
+			if(!lb(level)){
 				expectederror("(",tok[ptr-1]);
 				return 0;
 			}
-			if(!num())
+			if(!num(level))
 				return 0;
-			if(!rb()){
+			if(!rb(level)){
 				expectederror(")",tok[ptr-1]);
 				return 0;
 			}
@@ -300,9 +324,10 @@ bool definition(){
 	}
 }
 
-bool operator(){
+bool operator(int level){
 	if(num_tokens >ptr){
 		if(tok[ptr]->type == 2 || tok[ptr]->type == 3 || tok[ptr]->type == 4 || tok[ptr]->type == 5 || tok[ptr]->type == 6){
+			create_node(tok[ptr]->value,level);
 			ptr++;
 			return 1;
 		}
@@ -317,19 +342,20 @@ bool operator(){
 	}
 }
 
-bool lhand(){
+bool lhand(int level){
   //ID
-  if(!id()){
+  if(!id(level)){
     expectederror("ID",tok[ptr-1]);
     return 0;
   }
 
   //DOT
-  if(!dot())
+	create_node(" E | .ID",level);
+  if(!dot(level+1))
     return 1;
 
   //ID
-  if(!id()){
+  if(!id(level+1)){
 		expectederror("ID",tok[ptr-1]);
 		return 0;
 	}
@@ -337,20 +363,20 @@ bool lhand(){
   return 1;
 }
 
-bool rhand(){
-
-  if(!aps()){
-    if(!id() && !num()){
+bool rhand(int level){
+	create_node("NUM | 'MULTIPLE ID'",level);
+  if(!aps(level+1)){
+    if(!id(level+2) && !num(level+2)){
       expectederror("rhand",tok[ptr-1]);
       return 0;
     }
     return 1;
   }
   else{
-    while(id()){
+    while(id(level+1)){
       continue;
     }
-    if(!aps()){
+    if(!aps(level+1)){
       expectederror("'",tok[ptr-1]);
       return 0;
     }
@@ -359,21 +385,21 @@ bool rhand(){
   return 1;
 }
 
-bool normal(){
-
+bool normal(int level){
 	//ID
-	if(!id()){
-		expectederror("ID",tok[ptr-1]);
+	if(!id(level)){
+		//expectederror("ID",tok[ptr-1]);
 		return 0;
 	}
 
 	//COLUMN DEGINITIONS
-	if(!definition())
+	if(!definition(level))
 		return 0;
 
 	//REFERENCES
 	if(num_tokens >ptr){
 		if(tok[ptr]->type == 23 ){
+			create_node(tok[ptr]->value,level+1);
 			ptr++;
 		}
 		else{
@@ -385,35 +411,36 @@ bool normal(){
 	}
 
 	//ID
-	if(!id()){
+	if(!id(level)){
 		expectederror("ID",tok[ptr-1]);
 		return 0;
 	}
 
 	//LB
-	if(!lb()){
+	if(!lb(level)){
 		expectederror("(",tok[ptr-1]);
 		return 0;
 	}
 
 	//ID
-	if(!id()){
+	if(!id(level)){
 		expectederror("ID",tok[ptr-1]);
 		return 0;
 	}
 
 	//RB
-	if(!rb()){
+	if(!rb(level)){
 		expectederror(")",tok[ptr-1]);
 		return 0;
 	}
 
 }
 
-bool primary(){
+bool primary(int level){
 	//PRIMARY
 	if(num_tokens >ptr){
 		if(tok[ptr]->type == 20 ){
+			create_node(tok[ptr]->value,level);
 			ptr++;
 		}
 		else{
@@ -427,6 +454,7 @@ bool primary(){
 	//KEY
 	if(num_tokens >ptr){
 		if(tok[ptr]->type == 21 ){
+			create_node(tok[ptr]->value,level);
 			ptr++;
 		}
 		else{
@@ -440,127 +468,123 @@ bool primary(){
 	}
 
 	//LB
-	if(!lb()){
+	if(!lb(level)){
 		expectederror("(",tok[ptr-1]);
 		return 0;
 	}
 
 	//ID
-	if(!id()){
+	if(!id(level)){
 		expectederror("ID",tok[ptr-1]);
 		return 0;
 	}
 
 	//RB
-	if(!rb()){
+	if(!rb(level)){
 		expectederror(")",tok[ptr-1]);
 		return 0;
 	}
 
 }
 
-bool multiid(){
+bool multiid(int level){
 	//ID
-	if(!id()){
+	if(!id(level)){
 		expectederror("ID",tok[ptr-1]);
 		return 0;
 	}
 
 	//COMMA
-	if(comma()){
-		if(!multiid())
+	if(comma(level)){
+		if(!multiid(level+1))
 			return 0;
 	}
 
 	return 1;
 }
 
-bool multivalues(){
-	if(!rhand())
+bool multivalues(int level){
+	if(!rhand(level))
 		return 0;
 
-	if(comma()){
-		if(!multivalues())
+	if(comma(level)){
+		create_node("MUTLIPLE VALUES",level);
+		if(!multivalues(level+1))
 			return 0;
 	}
 
 	return 1;
 }
 
-bool multicolumn(){
+bool multicolumn(int level){
 	//columns
-	if(!lhand())
+	if(!lhand(level))
 		return 0;
 
-	if(comma()){
-		if(!multicolumn())
+	if(comma(level)){
+		create_node("MULTIPLE COLUMNS",level);
+		if(!multicolumn(level+1))
 			return 0;
 	}
 
 	return 1;
 }
 
-bool arguments(){
+bool arguments(int level){
 	//* or COLUMN NAMES
-	if(star()){
+	if(star(level+1)){
 		return 1;
 	}
 
-	if(!multicolumn()){
+	if(!multicolumn(level+1)){
 		return 0;
 	}
 
 	return 1;
 }
 
-bool attributes(){
-
-	if(!normal() && !primary()){
+bool attributes(int level){
+	create_node("GENERAL | PRIMARY KEY",level);
+	if(!normal(level+1) && !primary(level+1)){
 		return 0;
 	}
 
-	if(comma()){
-		if(!attributes())
+	if(comma(level)){
+		create_node("ATTRIBUTES",level);
+		if(!attributes(level+1))
 			return 0;
 	}
 	return 1;
 }
 
-bool conditions(){
+bool conditions(int level){
 
 	//ID
-	if(!lhand())
+	if(!lhand(level))
 		return 0;
 
 	//operator
-	if(!operator())
+	create_node(" < | > | <= | >= | =",level);
+	if(!operator(level+1))
 		return 0;
 
-	if(lb()){
+	create_node("(SELECT STATEMENT) | VALUE",level);
+	if(lb(level+1)){
 		bcount++;
-		if(!select_())
+		if(!select_(level+1))
 			return 0;
 
-		// if(!rb()){
-		// 	//expectederror(")",tok[ptr-1]);
-		// 	return 0;
-		// }
-
-		// if(!semicolon()){
-		// 	expectederror(";",tok[ptr-1]);
-		// 	return 0;
-		// }
 		return 1;
 	}
 
 	//ID
-	if(!rhand())
+	if(!rhand(level+1))
 		return 0;
 
-	if(rb()){
+	if(rb(level+1)){
 		bcount--;
 		if(bcount == 0){
-			if(!semicolon()){
+			if(!semicolon(level+1)){
 				expectederror(";",tok[ptr-1]);
 				return 0;
 			}
@@ -569,13 +593,15 @@ bool conditions(){
 	}
 
 	//SEMICOLON or CONDITIONS
-	if(!semicolon()){
-      if(!comma()){
+	create_node(" ; | , conditions",level);
+	if(!semicolon(level+1)){
+      if(!comma(level+1)){
 				expectederror(",",tok[ptr-1]);
 				return 0;
 			}
       else{
-        if(!conditions())
+				create_node(" conditions ",level+1);
+        if(!conditions(level+2))
           return 0;
       }
   }
@@ -590,21 +616,22 @@ bool conditions(){
 	return 1;
 }
 
-bool equalcondition(){
+bool equalcondition(int level){
 	//ID
-	if(!lhand())
+	if(!lhand(level))
 		return 0;
 
 	//operator
-	if(!equal())
+	if(!equal(level))
 		return 0;
 
 	//ID
-	if(!rhand())
+	if(!rhand(level))
 		return 0;
 
-	if(comma()){
-		if(!equalcondition())
+	if(comma(level)){
+		create_node("MULTIPLE ATTRIBUTE = VALUE",level);
+		if(!equalcondition(level+1))
 			return 0;
 	}
 
@@ -612,10 +639,11 @@ bool equalcondition(){
 	return 1;
 }
 
-bool add(){
+bool add(int level){
 	//ADD
 	if(num_tokens >ptr){
 		if(tok[ptr]->type == 40){
+			create_node(tok[ptr]->value,level);
 			ptr ++;
 		}
 		else return 0;
@@ -625,17 +653,17 @@ bool add(){
 	}
 
   //COLUMN NAME
-	if(!id()){
+	if(!id(level)){
 		expectederror("ID",tok[ptr-1]);
 		return 0;
 	}
 
   //COLUMN DEFINITION
-  if(!definition())
+  if(!definition(level))
     return 0;
 
   //SEMICOLON
-	if(!semicolon()){
+	if(!semicolon(level)){
     expectederror(";",tok[ptr-1]);
 		return 0;
 	}

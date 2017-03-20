@@ -192,11 +192,13 @@ void print_token(token* i)
 }
 
 
+
 //////////////////////////////////////////////////////////////////SELECT//////////////////////////////////////////////////////////////////
-bool select_(){
+bool select_(int level){
 	//SELECT
 	if(num_tokens >ptr){
 		if(tok[ptr]->type == 24){
+			create_node(tok[ptr]->value,level);
 			ptr ++;
 		}
 		else return 0;
@@ -207,63 +209,70 @@ bool select_(){
 	}
 
 	//ARGUMENTS
-	if(!arguments())
+	create_node(" * | ARGUMENTS",level);
+	if(!arguments(level+1))
 		return 0;
 
 	//FROM
-	if(!from()){
+	if(!from(level)){
 		expectederror("FROM",tok[ptr-1]);
 		return 0;
 	}
 
 	//CHECK for LEFT BRACKET (NESTED SELECT)
-	if(lb()){
+	if(lb(level)){
 		bcount ++;
 		printf("%d\n",bcount);
-		if(!select_())
+		if(!select_(level+1))
 			return 0;
 	}
 
 	//CHECK FOR RIGHT BRACKET ( NESTED SELECT )
-	if(rb()){
+	if(rb(level)){
 		bcount--;
-		if(!semicolon())
+		if(!semicolon(level))
 			return 0;
 		return 1;
 	}
 
 	//TABLE NAME
-	if(!multiid())
+	if(!id(level))
 		return 0;
 
+	if(rb(level)){
+		bcount--;
+	}
+
 	//SEMICOLON or CONDITIONS
-	if(semicolon()){
-		if(bcount == 0)
+	create_node(" ; | WHERE conditions",level);
+	if(semicolon(level+1)){
+		if(bcount == 0 )
 			return 1;
 		else {
 			printf("Brackets not balanced\n");
-			return 0;
+			return 1;
 		}
 	}
 
 	//WHERE
-	if(!where()){
+	if(!where(level+1)){
 		expectederror("WHERE",tok[ptr-1]);
 		return 0;
 	}
 
 	//CONDITIONS
-	if(!conditions())
+	if(!conditions(level+1))
 		return 0;
 
 	return 1;
 }
 
 ///////////////////////////////////////////////////////////DELETE/////////////////////////////////////////////////////////////////////
-bool delete(){
+bool delete(int level){
 	//DELETE
 	if(num_tokens >ptr){
 		if(tok[ptr]->type == 37){
+			create_node(tok[ptr]->value,level);
 			ptr ++;
 		}
 		else return 0;
@@ -274,35 +283,40 @@ bool delete(){
 	}
 
 	//FROM
-	if(!from()){
+	if(!from(level)){
 		expectederror("FROM",tok[ptr-1]);
 		return 0;
 	}
 
 	//TABLE NAME
-	if(!id()){
+	if(!id(level)){
 		expectederror("ID",tok[ptr-1]);
 		return 0;
 	}
 
+	create_node(" ; | WHERE conditions",level);
+	if(semicolon(level+1))
+		return 1;
+
 	//WHERE
-	if(!where()){
+	if(!where(level+1)){
 		expectederror("WHERE",tok[ptr-1]);
 		return 0;
 	}
 
 	//CONDITIONS
-	if(!conditions())
+	if(!conditions(level+1))
 		return 0;
 
 	return 1;
 }
 
 ///////////////////////////////////////////////////////////////////////CREATE//////////////////////////////////////////////////////////////////////////
-bool create(){
+bool create(int level){
   //CREATE
 	if(num_tokens >ptr){
 		if(tok[ptr]->type == 15){
+			create_node(tok[ptr]->value,level);
 			ptr ++;
 		}
 		else return 0;
@@ -313,35 +327,36 @@ bool create(){
 	}
 
 	//TABLE
-	if(!table()){
+	if(!table(level)){
 		expectederror("TABLE",tok[ptr-1]);
 		return 0;
 	}
 
 	//ID
-	if(!id()){
+	if(!id(level)){
 		expectederror("ID",tok[ptr-1]);
 		return 0;
 	}
 
 	//LEFT BRACKET
-	if(!lb()){
+	if(!lb(level)){
 		expectederror("(",tok[ptr-1]);
 		return 0;
 	}
 
 	//ATTRIBUTES
-	if(!attributes())
+	create_node("ATTRIBUTES",level);
+	if(!attributes(level+1))
 		return 0;
 
 	//RIGHT BRACKET
-	if(!rb()){
+	if(!rb(level)){
 		expectederror(")",tok[ptr-1]);
 		return 0;
 	}
 
 	//SEMICOLON
-	if(!semicolon()){
+	if(!semicolon(level)){
 		expectederror(";",tok[ptr-1]);
 	}
 
@@ -349,10 +364,11 @@ bool create(){
 }
 
 ////////////////////////////////////////////////////////////////////////INSERT///////////////////////////////////////////////////////////////////////
-bool insert(){
+bool insert(int level){
   //INSERT
 	if(num_tokens >ptr){
 		if(tok[ptr]->type == 32){
+			create_node(tok[ptr]->value,level);
 			ptr ++;
 		}
 		else return 0;
@@ -363,57 +379,60 @@ bool insert(){
 	}
 
 	//INTO
-	if(!into())
+	if(!into(level))
 		return 0;
 
 	//TABLE NAME
-	if(!id()){
+	if(!id(level)){
 		expectederror("ID",tok[ptr-1]);
 		return 0;
 	}
 
 	//OPTIONAL ATTRIBUTES
-	if(lb()){
-		if(!multicolumn())
+	create_node("E | Optional Attributes",level);
+	if(lb(level+1)){
+		if(!multicolumn(level+1))
 			return 0;
-		if(!rb()){
+		if(!rb(level+1)){
 			expectederror(")",tok[ptr-1]);
 			return 0;
 		}
 	}
 
 	//VALUES
-	if(!values())
+	if(!values(level))
 		return 0;
 
 	//LEFT BRACKET
-	if(!lb()){
+	if(!lb(level)){
 		expectederror("(",tok[ptr-1]);
 		return 0;
 	}
 
 	//MULTIPLE VALUES
-	if(!multivalues())
+	create_node("MULTIPLE VALUES",level);
+	if(!multivalues(level+1))
 		return 0;
 
 	//RIGHT BRACKET
-	if(!rb()){
+	if(!rb(level)){
 		expectederror(")",tok[ptr-1]);
 		return 0;
 	}
 
 	//SEMICOLON
-	if(!semicolon())
+	if(!semicolon(level))
 		return 0;
 
 	return 1;
 }
 
 ////////////////////////////////////////////////////////////////////UPDATE//////////////////////////////////////////////////////////////////////////////////////
-bool update(){
+bool update(int level){
   //UPDATE
 	if(num_tokens >ptr){
 		if(tok[ptr]->type == 35){
+			create_node(tok[ptr]->value,level);
 			ptr ++;
 		}
 		else return 0;
@@ -424,37 +443,40 @@ bool update(){
 	}
 
 	//TABLE NAME
-	if(!id()){
+	if(!id(level)){
 		expectederror("ID",tok[ptr-1]);
 		return 0;
 	}
 
 	//SET
-	if(!set())
+	if(!set(level))
 		return 0;
 
 	//SET ATTRIBUTES
-	if(!equalcondition())
+	create_node("MULTIPLE ATTRIBUTE = VALUE",level);
+	if(!equalcondition(level+1))
 		return 0;
 
-	if(semicolon())
+	if(semicolon(level+1))
 		return 1;
 
 	//WHERE
-	if(!where())
+	if(!where(level))
  		return 1;
 
-	if(!conditions())
+	create_node("CONDITIONS",level);
+	if(!conditions(level+1))
 		return 0;
 
 	return 1;
 }
 
 //////////////////////////////////////////////////////////////////////////////DROP/////////////////////////////////////////////////////////////////////////////////////
-bool drop(){
+bool drop(int level){
 	//DROP
 	if(num_tokens >ptr){
 		if(tok[ptr]->type == 38){
+			create_node(tok[ptr]->value,level);
 			ptr ++;
 		}
 		else return 0;
@@ -465,19 +487,20 @@ bool drop(){
 	}
 
 	//TABLE OR COLUMN
-	if(!table() && !column()){
+	create_node("TABLE  | COLUMN ",level);
+	if(!table(level+1) && !column(level+1)){
 		expectederror("TABLE or COLUMN",tok[ptr-1]);
 		return 0;
 	}
 
 	//TABLE NAME OR COLUMN NAME
-	if(!id()){
+	if(!id(level)){
 		expectederror("ID",tok[ptr-1]);
 		return 0;
 	}
 
 	//SEMICOLON
-	if(!semicolon()){
+	if(!semicolon(level)){
 		expectederror(";",tok[ptr-1]);
 		return 0;
 	}
@@ -486,11 +509,12 @@ bool drop(){
 }
 
 /////////////////////////////////////////////////////////////////////////ALTER////////////////////////////////////////////////////////////////////////////////////////
-int alter(){
+int alter(int level){
 
 	//ALTER
 	if(num_tokens >ptr){
 		if(tok[ptr]->type == 39){
+			create_node(tok[ptr]->value,level);
 			ptr ++;
 		}
 		else return 0;
@@ -501,49 +525,68 @@ int alter(){
 	}
 
 	//TABLE
-	if(!table()){
+	if(!table(level)){
 		expectederror("TABLE",tok[ptr-1]);
 		return 0;
 	}
 
 	//TABLE NAME
-	if(!id()){
+	if(!id(level)){
 		expectederror("ID",tok[ptr-1]);
 		return 0;
 	}
 
 	//DROP OR ADD
-	if(!drop() && !add()){
+	create_node("DROP | ADD",level);
+	if(!drop(level+1) && !add(level+1)){
 		return 0;
 	}
 
 	return 1;
 }
 
+void print(char *msg,int level){
+	int i;
+	if(level == 1){
+		printf("|--> %s\n",msg);
+		return;
+	}
+	for(i=0;i<level-1;i++){
+		printf("\t");
+	}
+	printf("|--> %s\n",msg);
+}
 
+void printparse(){
+	int i;
+	for(i=0;i<num_nodes;i++){
+		//printf("%s %d\n",tree[i].value,tree[i].level);
+		print(tree[i].value,tree[i].level);
+	}
+}
 
 void parse(){
   switch(tok[0]->type){
     case 24:
-      if(select_()) flag = 1;
+      if(select_(level)) flag = 1;
       break;
     case 37:
-      if(delete()) flag = 1;
+      if(delete(level)) flag = 1;
       break;
     case 15:
-      if(create()) flag = 1;
+      if(create(level)) flag = 1;
       break;
     case 32:
-      if(insert()) flag = 1;
+      if(insert(level)) flag = 1;
       break;
     case 35:
-      if(update()) flag = 1;
+      if(update(level)) flag = 1;
       break;
     case 38:
-      if(drop()) flag = 1;
+      if(drop(level)) flag = 1;
       break;
     case 39:
-      if(alter()) flag = 1;
+      if(alter(level)) flag = 1;
       break;
     default:
 			//error("Invalid Input\n");
@@ -551,5 +594,6 @@ void parse(){
   }
 	if(flag == 1){
 		printf("Printing Parse Tree\n");
+		printparse();
 	}
 }

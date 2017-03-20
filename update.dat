@@ -1,2 +1,3 @@
-UPDATE Customers
-SET ContactName= 'Juan'; 
+UPDATE CUSTOMERS
+SET ADDRESS = 'Pune',name = 'mahesh'
+WHERE ID = 6;

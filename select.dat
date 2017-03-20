@@ -1,6 +1,1 @@
-SELECT *
-  FROM BOOK
- WHERE BOOK.AUTHOR_ID = (
- 		SELECT ID
-          FROM AUTHOR
-         WHERE LAST_NAME = 'Orwell');   
+select * from table1 where name = (select name from table2);
