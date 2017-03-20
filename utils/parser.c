@@ -532,11 +532,11 @@ bool multicolumn(int level){
 
 bool arguments(int level){
 	//* or COLUMN NAMES
-	if(star(level+1)){
+	if(star(level)){
 		return 1;
 	}
 
-	if(!multicolumn(level+1)){
+	if(!multicolumn(level)){
 		return 0;
 	}
 
