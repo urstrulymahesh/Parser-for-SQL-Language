@@ -250,7 +250,7 @@ bool select_(int level){
 			return 1;
 		else {
 			printf("Brackets not balanced\n");
-			return 1;
+			return 0;
 		}
 	}
 
